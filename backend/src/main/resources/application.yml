@@ -1,0 +1,59 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: yatraflow-backend
+  datasource:
+    url: jdbc:h2:mem:yatraflowdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: false
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  jwt:
+    # Base64-encoded 256-bit secret key
+    secret: c2VjdXJlLXlhdHJhLWZsb3ctY3Jvd2QtaW50ZWxsaWdlbmNlLXN5c3RlbS1qd3Qtc2VjcmV0LWtleS0yMDI2
+    expiration-ms: 86400000 # 24 hours
+    issuer: yatraflow-intelligence-system
+  cors:
+    allowed-origins: "http://localhost:3000,http://127.0.0.1:3000"
+    allowed-methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+    allowed-headers: "*"
+    allow-credentials: true
+  crowd:
+    thresholds:
+      watch-occupancy-percent: 70.0
+      high-occupancy-percent: 85.0
+      critical-occupancy-percent: 92.0
+    flow:
+      window-minutes: 60
+    speed:
+      min-reasonable-kmh: 0.2
+      max-reasonable-kmh: 12.0
+      normal-speed-kmh: 2.5
+    bottleneck:
+      min-accumulation-rate: 5.0
+      speed-drop-threshold-kmh: 1.8
+
+logging:
+  level:
+    root: INFO
+    com.yatraflow: DEBUG
+    org.springframework.security: INFO

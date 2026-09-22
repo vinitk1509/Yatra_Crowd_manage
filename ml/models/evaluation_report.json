@@ -1,0 +1,234 @@
+{
+  "horizons": {
+    "15m": {
+      "baseline": {
+        "mae": 17.65,
+        "rmse": 24.78,
+        "mape_percent": 2.05
+      },
+      "ridge": {
+        "mae": 16.17,
+        "rmse": 22.95,
+        "mape_percent": 1.85
+      },
+      "random_forest": {
+        "mae": 14.35,
+        "rmse": 21.26,
+        "mape_percent": 1.44
+      },
+      "gradient_boosting": {
+        "mae": 14.04,
+        "rmse": 20.73,
+        "mape_percent": 1.42
+      },
+      "best_model": "GradientBoosting",
+      "selected_metrics": {
+        "mae": 14.04,
+        "rmse": 20.73,
+        "mape_percent": 1.42
+      },
+      "improvement_vs_baseline_pct": 20.45
+    },
+    "30m": {
+      "baseline": {
+        "mae": 24.38,
+        "rmse": 32.62,
+        "mape_percent": 3.1
+      },
+      "ridge": {
+        "mae": 21.33,
+        "rmse": 28.67,
+        "mape_percent": 2.63
+      },
+      "random_forest": {
+        "mae": 16.88,
+        "rmse": 24.39,
+        "mape_percent": 1.72
+      },
+      "gradient_boosting": {
+        "mae": 16.73,
+        "rmse": 23.76,
+        "mape_percent": 1.74
+      },
+      "best_model": "GradientBoosting",
+      "selected_metrics": {
+        "mae": 16.73,
+        "rmse": 23.76,
+        "mape_percent": 1.74
+      },
+      "improvement_vs_baseline_pct": 31.38
+    },
+    "60m": {
+      "baseline": {
+        "mae": 37.82,
+        "rmse": 50.08,
+        "mape_percent": 5.13
+      },
+      "ridge": {
+        "mae": 30.2,
+        "rmse": 40.08,
+        "mape_percent": 4.03
+      },
+      "random_forest": {
+        "mae": 20.03,
+        "rmse": 28.55,
+        "mape_percent": 2.09
+      },
+      "gradient_boosting": {
+        "mae": 20.11,
+        "rmse": 28.18,
+        "mape_percent": 2.18
+      },
+      "best_model": "GradientBoosting",
+      "selected_metrics": {
+        "mae": 20.11,
+        "rmse": 28.18,
+        "mape_percent": 2.18
+      },
+      "improvement_vs_baseline_pct": 46.83
+    }
+  },
+  "scenario_evaluations": {
+    "SLOW_MOVEMENT": {
+      "mae": 15.26,
+      "rmse": 21.96,
+      "mape_percent": 1.48
+    },
+    "WEATHER_SLOWDOWN": {
+      "mae": 15.22,
+      "rmse": 21.64,
+      "mape_percent": 1.64
+    },
+    "RECOVERY": {
+      "mae": 18.95,
+      "rmse": 26.88,
+      "mape_percent": 1.9
+    },
+    "SUDDEN_INFLOW": {
+      "mae": 17.85,
+      "rmse": 24.62,
+      "mape_percent": 2.0
+    },
+    "CHECKPOINT_RESTRICTION": {
+      "mae": 15.63,
+      "rmse": 22.4,
+      "mape_percent": 1.56
+    }
+  },
+  "model_export": {
+    "version": "1.0.0",
+    "features": [
+      "current_crowd",
+      "crowd_lag_1",
+      "crowd_lag_2",
+      "crowd_lag_3",
+      "crowd_lag_4",
+      "crowd_delta_15m",
+      "crowd_delta_30m",
+      "inflow",
+      "outflow",
+      "net_flow",
+      "average_speed",
+      "transit_time",
+      "occupancy_pct",
+      "capacity",
+      "in_transit_count",
+      "sin_time_of_day",
+      "cos_time_of_day",
+      "day_of_week",
+      "is_weekend",
+      "weather_code",
+      "is_bottleneck",
+      "cp_id"
+    ],
+    "horizons": {
+      "15m": {
+        "intercept": 55.28271642306095,
+        "coefficients": {
+          "current_crowd": 0.5343857728859805,
+          "crowd_lag_1": 0.38079321529707477,
+          "crowd_lag_2": 0.2758238498258475,
+          "crowd_lag_3": -0.048207894306672903,
+          "crowd_lag_4": -0.07728087697116406,
+          "crowd_delta_15m": 0.15359279736633444,
+          "crowd_delta_30m": 0.25856204193422877,
+          "inflow": -0.08673206704610079,
+          "outflow": -0.24032485589658187,
+          "net_flow": 0.15359279712383211,
+          "average_speed": -5.727815333977571,
+          "transit_time": -0.11755486885846773,
+          "occupancy_pct": -3.6597651554085053,
+          "capacity": -0.004236551579845463,
+          "in_transit_count": 0.10701616214558653,
+          "sin_time_of_day": 2.628162646417512,
+          "cos_time_of_day": -5.604740619162493,
+          "day_of_week": 0.16870813260934742,
+          "is_weekend": -1.1460861027330895,
+          "weather_code": -1.3363144780291234,
+          "is_bottleneck": 0.0,
+          "cp_id": -2.367274410489137
+        },
+        "rmse": 22.95,
+        "mae": 16.17
+      },
+      "30m": {
+        "intercept": 123.42179746928673,
+        "coefficients": {
+          "current_crowd": 0.6226364833176182,
+          "crowd_lag_1": 0.41314285371589693,
+          "crowd_lag_2": 0.2999786489113609,
+          "crowd_lag_3": -0.07308434490343484,
+          "crowd_lag_4": -0.1242574038012935,
+          "crowd_delta_15m": 0.20949368096712095,
+          "crowd_delta_30m": 0.322657342732577,
+          "inflow": -0.15541400557916568,
+          "outflow": -0.36490767097279797,
+          "net_flow": 0.20949368086481635,
+          "average_speed": -9.470755400761327,
+          "transit_time": -0.19184740934253156,
+          "occupancy_pct": -7.734958825215475,
+          "capacity": -0.013600427248584122,
+          "in_transit_count": 0.18683687428736204,
+          "sin_time_of_day": 4.969286186338941,
+          "cos_time_of_day": -10.386762154482188,
+          "day_of_week": 0.31955016723288515,
+          "is_weekend": -2.1087019361091146,
+          "weather_code": -2.6189829218650766,
+          "is_bottleneck": 0.0,
+          "cp_id": -3.44621198700267
+        },
+        "rmse": 28.67,
+        "mae": 21.33
+      },
+      "60m": {
+        "intercept": 296.3036449810734,
+        "coefficients": {
+          "current_crowd": 0.8232935836938763,
+          "crowd_lag_1": 0.4708242207016047,
+          "crowd_lag_2": 0.4246537160050531,
+          "crowd_lag_3": -0.07417816465181137,
+          "crowd_lag_4": -0.31052094681775344,
+          "crowd_delta_15m": 0.3524693764234038,
+          "crowd_delta_30m": 0.3986393517013043,
+          "inflow": -0.3474993653454273,
+          "outflow": -0.6999687522534095,
+          "net_flow": 0.35246937702579695,
+          "average_speed": -9.863956739003578,
+          "transit_time": -0.26378621341462566,
+          "occupancy_pct": -18.2749856732567,
+          "capacity": -0.04547862277481509,
+          "in_transit_count": 0.32663513424301,
+          "sin_time_of_day": 9.511227016493075,
+          "cos_time_of_day": -20.02058009057442,
+          "day_of_week": 0.6561519515600662,
+          "is_weekend": -4.201189016995698,
+          "weather_code": -4.383856073443627,
+          "is_bottleneck": 0.0,
+          "cp_id": -1.7373217376050716
+        },
+        "rmse": 40.08,
+        "mae": 30.2
+      }
+    }
+  }
+}

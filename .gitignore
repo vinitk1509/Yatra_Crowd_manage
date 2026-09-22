@@ -1,0 +1,41 @@
+# v0 sandbox internal files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+.snowflake/
+.v0-trash/
+.vercel/
+
+# Environment variables
+.env*.local
+.env
+
+# Node.js & Next.js
+node_modules/
+.next/
+out/
+.DS_Store
+
+# Java & Maven
+backend/target/
+target/
+*.class
+*.jar
+*.war
+*.ear
+.flattened-pom.xml
+
+# Python & ML
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+ml/__pycache__/
+
+# IDEs & Editors
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*.log
