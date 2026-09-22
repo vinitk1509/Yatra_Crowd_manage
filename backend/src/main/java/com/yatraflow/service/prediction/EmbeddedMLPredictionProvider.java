@@ -30,6 +30,8 @@ public class EmbeddedMLPredictionProvider implements PredictionProvider {
         Map<String, Double> coefficients = new HashMap<>();
         double rmse;
         double mae;
+        double q10Offset;
+        double q90Offset;
     }
 
     @PostConstruct
@@ -55,6 +57,8 @@ public class EmbeddedMLPredictionProvider implements PredictionProvider {
                             hm.intercept = hNode.get("intercept").asDouble();
                             hm.rmse = hNode.has("rmse") ? hNode.get("rmse").asDouble() : 25.0;
                             hm.mae = hNode.has("mae") ? hNode.get("mae").asDouble() : 18.0;
+                            hm.q10Offset = hNode.has("q10_offset") ? hNode.get("q10_offset").asDouble() : (1.64 * hm.rmse);
+                            hm.q90Offset = hNode.has("q90_offset") ? hNode.get("q90_offset").asDouble() : (1.64 * hm.rmse);
 
                             JsonNode coefNode = hNode.get("coefficients");
                             if (coefNode != null && coefNode.isObject()) {
@@ -97,10 +101,14 @@ public class EmbeddedMLPredictionProvider implements PredictionProvider {
 
             int predCrowd;
             double rmse = 25.0;
+            double lowerOffset = 30.0;
+            double upperOffset = 45.0;
 
             if (modelLoaded && horizonModels.containsKey(h)) {
                 HorizonModel hm = horizonModels.get(h);
                 rmse = hm.rmse;
+                lowerOffset = hm.q10Offset > 0 ? hm.q10Offset : (1.64 * rmse);
+                upperOffset = hm.q90Offset > 0 ? hm.q90Offset : (1.64 * rmse);
 
                 double rawPred = hm.intercept;
                 for (Map.Entry<String, Double> coefEntry : hm.coefficients.entrySet()) {
@@ -112,15 +120,17 @@ public class EmbeddedMLPredictionProvider implements PredictionProvider {
             } else {
                 // Physics-informed baseline fallback: crowd + (netFlow * minutes)
                 predCrowd = currentCrowd + (int) Math.round(netFlow * (minAhead / 15.0) * 0.85);
+                lowerOffset = 1.64 * rmse;
+                upperOffset = 1.64 * rmse;
             }
 
             // Bound predicted crowd safely between 0 and capacity * 1.05
             predCrowd = Math.max(0, Math.min((int) (capacity * 1.05), predCrowd));
             double predOcc = capacity > 0 ? Math.round(((double) predCrowd / capacity) * 1000.0) / 10.0 : 0.0;
 
-            // 95% Uncertainty Prediction Interval (mean +/- 1.96 * RMSE)
-            int lowerBound = Math.max(0, (int) Math.round(predCrowd - 1.96 * rmse));
-            int upperBound = Math.min(capacity, (int) Math.round(predCrowd + 1.96 * rmse));
+            // Non-parametric Quantile Prediction Interval [q10, q90]
+            int lowerBound = Math.max(0, (int) Math.round(predCrowd - lowerOffset));
+            int upperBound = Math.min(capacity, (int) Math.round(predCrowd + upperOffset));
             double lowerOcc = capacity > 0 ? Math.round(((double) lowerBound / capacity) * 1000.0) / 10.0 : 0.0;
             double upperOcc = capacity > 0 ? Math.round(((double) upperBound / capacity) * 1000.0) / 10.0 : 0.0;
 

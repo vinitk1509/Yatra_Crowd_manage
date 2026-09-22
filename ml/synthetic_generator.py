@@ -235,8 +235,9 @@ class SyntheticCrowdDataGenerator:
 
 if __name__ == "__main__":
     generator = SyntheticCrowdDataGenerator(seed=42)
-    df = generator.generate_dataset(days=30, interval_minutes=15)
+    df = generator.generate_dataset(days=TOTAL_DAYS, interval_minutes=15)
     print(f"Generated {len(df)} synthetic rows across {len(CHECKPOINTS)} checkpoints.")
     print(f"Scenarios simulated: {df['scenario'].nunique()} distinct operational scenarios.")
     df.to_csv("ml/synthetic_crowd_data.csv", index=False)
     print("Saved dataset to ml/synthetic_crowd_data.csv with dataStatus = SYNTHETIC_DATA.")
+

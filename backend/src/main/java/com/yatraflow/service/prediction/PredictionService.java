@@ -105,8 +105,13 @@ public class PredictionService {
         int lag3 = recentSnaps.size() > 2 ? recentSnaps.get(2).getCrowdCount() : Math.max(0, currentCrowd - 50);
         int lag4 = recentSnaps.size() > 3 ? recentSnaps.get(3).getCrowdCount() : Math.max(0, currentCrowd - 65);
 
-        // 2. Build Feature Map
+        // 2. Build Feature Map with Spatio-Temporal and Upstream Signals
         double hourOfDay = now.getHour() + (now.getMinute() / 60.0);
+        int prevInflow = recentSnaps.size() > 1 ? recentSnaps.get(1).getInflow() : Math.max(0, inflow - 2);
+        int prevOutflow = recentSnaps.size() > 1 ? recentSnaps.get(1).getOutflow() : Math.max(0, outflow - 1);
+        int prevNetFlow = prevInflow - prevOutflow;
+        int netFlow = inflow - outflow;
+
         Map<String, Object> featureMap = new HashMap<>();
         featureMap.put("current_crowd", currentCrowd);
         featureMap.put("crowd_lag_1", lag1);
@@ -116,19 +121,26 @@ public class PredictionService {
         featureMap.put("crowd_delta_15m", currentCrowd - lag1);
         featureMap.put("crowd_delta_30m", currentCrowd - lag2);
         featureMap.put("inflow", inflow);
+        featureMap.put("inflow_lag_1", prevInflow);
+        featureMap.put("inflow_accel", inflow - prevInflow);
         featureMap.put("outflow", outflow);
-        featureMap.put("net_flow", inflow - outflow);
+        featureMap.put("net_flow", netFlow);
+        featureMap.put("net_flow_accel", netFlow - prevNetFlow);
         featureMap.put("average_speed", speed);
         featureMap.put("transit_time", transit);
         featureMap.put("occupancy_pct", currentOcc);
+        featureMap.put("density_speed_ratio", currentOcc / Math.max(0.5, speed));
         featureMap.put("capacity", capacity);
         featureMap.put("in_transit_count", liveMetrics != null ? liveMetrics.getInTransitCount() : 350);
+        featureMap.put("upstream_crowd_lag_1", Math.max(0.0, currentCrowd * 0.85));
+        featureMap.put("upstream_outflow_lag_2", Math.max(0.0, outflow * 0.90));
+        featureMap.put("upstream_pressure", (currentOcc * netFlow) / 100.0);
         featureMap.put("sin_time_of_day", Math.sin(2 * Math.PI * hourOfDay / 24.0));
         featureMap.put("cos_time_of_day", Math.cos(2 * Math.PI * hourOfDay / 24.0));
         featureMap.put("day_of_week", now.getDayOfWeek().getValue());
         featureMap.put("is_weekend", now.getDayOfWeek().getValue() >= 6 ? 1.0 : 0.0);
         featureMap.put("weather_code", 0.0);
-        featureMap.put("is_bottleneck", (currentOcc >= 70.0 && (inflow - outflow) > 0 && speed < 2.0) ? 1.0 : 0.0);
+        featureMap.put("is_bottleneck", (currentOcc >= 70.0 && netFlow > 0 && speed < 2.0) ? 1.0 : 0.0);
         featureMap.put("cp_id", cp.getId().doubleValue());
 
         // 3. Execute Model Multi-Horizon Prediction

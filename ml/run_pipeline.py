@@ -20,9 +20,9 @@ def main():
     print("================================================================")
 
     # 1. Generate Synthetic Data
-    print("\n[STEP 1/4] Generating 30 days of physical corridor crowd data...")
+    print("\n[STEP 1/4] Generating 60 days of physical corridor crowd data (28,800 timestamps)...")
     generator = SyntheticCrowdDataGenerator(seed=42)
-    df = generator.generate_dataset(days=30, interval_minutes=15)
+    df = generator.generate_dataset(days=60, interval_minutes=15)
     os.makedirs("ml", exist_ok=True)
     df.to_csv("ml/synthetic_crowd_data.csv", index=False)
     print(f"Generated {len(df)} rows across 5 checkpoints and 10 scenarios.")

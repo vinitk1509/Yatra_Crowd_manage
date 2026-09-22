@@ -1,122 +1,522 @@
 {
+  "dataset_summary": {
+    "total_records": 28780,
+    "train_size": 20146,
+    "val_size": 4317,
+    "test_size": 4317,
+    "num_features": 29
+  },
   "horizons": {
     "15m": {
       "baseline": {
-        "mae": 17.65,
-        "rmse": 24.78,
-        "mape_percent": 2.05
+        "mae": 17.55,
+        "rmse": 24.65,
+        "mape_percent": 2.04
       },
       "ridge": {
-        "mae": 16.17,
-        "rmse": 22.95,
-        "mape_percent": 1.85
+        "mae": 15.92,
+        "rmse": 22.79,
+        "mape_percent": 1.82
       },
       "random_forest": {
-        "mae": 14.35,
-        "rmse": 21.26,
-        "mape_percent": 1.44
+        "mae": 14.26,
+        "rmse": 21.29,
+        "mape_percent": 1.4
       },
       "gradient_boosting": {
-        "mae": 14.04,
-        "rmse": 20.73,
-        "mape_percent": 1.42
+        "mae": 13.79,
+        "rmse": 20.51,
+        "mape_percent": 1.38
       },
-      "best_model": "GradientBoosting",
+      "quantile_coverage_pct": 89.62,
+      "pinball_loss_q10": 11.81,
+      "pinball_loss_q50": 8.62,
+      "pinball_loss_q90": 13.46,
+      "best_model": "GradientBoosting (GBDT + Quantile Envelopes)",
       "selected_metrics": {
-        "mae": 14.04,
-        "rmse": 20.73,
-        "mape_percent": 1.42
+        "mae": 13.79,
+        "rmse": 20.51,
+        "mape_percent": 1.38
       },
-      "improvement_vs_baseline_pct": 20.45
+      "improvement_vs_baseline_pct": 21.42
     },
     "30m": {
       "baseline": {
-        "mae": 24.38,
-        "rmse": 32.62,
-        "mape_percent": 3.1
+        "mae": 25.97,
+        "rmse": 34.62,
+        "mape_percent": 3.23
       },
       "ridge": {
-        "mae": 21.33,
-        "rmse": 28.67,
-        "mape_percent": 2.63
+        "mae": 22.06,
+        "rmse": 30.14,
+        "mape_percent": 2.68
       },
       "random_forest": {
-        "mae": 16.88,
-        "rmse": 24.39,
-        "mape_percent": 1.72
+        "mae": 17.9,
+        "rmse": 25.85,
+        "mape_percent": 1.79
       },
       "gradient_boosting": {
-        "mae": 16.73,
-        "rmse": 23.76,
-        "mape_percent": 1.74
+        "mae": 17.23,
+        "rmse": 24.77,
+        "mape_percent": 1.76
       },
-      "best_model": "GradientBoosting",
+      "quantile_coverage_pct": 87.38,
+      "pinball_loss_q10": 10.95,
+      "pinball_loss_q50": 10.62,
+      "pinball_loss_q90": 13.55,
+      "best_model": "GradientBoosting (GBDT + Quantile Envelopes)",
       "selected_metrics": {
-        "mae": 16.73,
-        "rmse": 23.76,
-        "mape_percent": 1.74
+        "mae": 17.23,
+        "rmse": 24.77,
+        "mape_percent": 1.76
       },
-      "improvement_vs_baseline_pct": 31.38
+      "improvement_vs_baseline_pct": 33.65
     },
     "60m": {
       "baseline": {
-        "mae": 37.82,
-        "rmse": 50.08,
-        "mape_percent": 5.13
+        "mae": 40.16,
+        "rmse": 53.83,
+        "mape_percent": 5.32
       },
       "ridge": {
-        "mae": 30.2,
-        "rmse": 40.08,
-        "mape_percent": 4.03
+        "mae": 31.35,
+        "rmse": 42.45,
+        "mape_percent": 4.11
       },
       "random_forest": {
-        "mae": 20.03,
-        "rmse": 28.55,
-        "mape_percent": 2.09
+        "mae": 20.88,
+        "rmse": 30.21,
+        "mape_percent": 2.14
       },
       "gradient_boosting": {
-        "mae": 20.11,
-        "rmse": 28.18,
-        "mape_percent": 2.18
+        "mae": 20.59,
+        "rmse": 29.41,
+        "mape_percent": 2.16
       },
-      "best_model": "GradientBoosting",
+      "quantile_coverage_pct": 86.73,
+      "pinball_loss_q10": 9.79,
+      "pinball_loss_q50": 12.5,
+      "pinball_loss_q90": 13.69,
+      "best_model": "GradientBoosting (GBDT + Quantile Envelopes)",
       "selected_metrics": {
-        "mae": 20.11,
-        "rmse": 28.18,
-        "mape_percent": 2.18
+        "mae": 20.59,
+        "rmse": 29.41,
+        "mape_percent": 2.16
       },
-      "improvement_vs_baseline_pct": 46.83
+      "improvement_vs_baseline_pct": 48.73
     }
   },
   "scenario_evaluations": {
-    "SLOW_MOVEMENT": {
-      "mae": 15.26,
-      "rmse": 21.96,
-      "mape_percent": 1.48
-    },
-    "WEATHER_SLOWDOWN": {
-      "mae": 15.22,
-      "rmse": 21.64,
-      "mape_percent": 1.64
-    },
-    "RECOVERY": {
-      "mae": 18.95,
-      "rmse": 26.88,
-      "mape_percent": 1.9
-    },
-    "SUDDEN_INFLOW": {
-      "mae": 17.85,
-      "rmse": 24.62,
-      "mape_percent": 2.0
+    "BOTTLENECK": {
+      "mae": 17.26,
+      "rmse": 26.26,
+      "mape_percent": 1.63
     },
     "CHECKPOINT_RESTRICTION": {
-      "mae": 15.63,
-      "rmse": 22.4,
-      "mape_percent": 1.56
+      "mae": 15.86,
+      "rmse": 22.58,
+      "mape_percent": 1.65
+    },
+    "CROWD_BUILDUP": {
+      "mae": 13.87,
+      "rmse": 18.48,
+      "mape_percent": 1.38
+    },
+    "EVENING_SURGE": {
+      "mae": 19.86,
+      "rmse": 29.06,
+      "mape_percent": 1.92
+    },
+    "MORNING_SURGE": {
+      "mae": 19.22,
+      "rmse": 25.82,
+      "mape_percent": 1.91
+    },
+    "NORMAL_DAY": {
+      "mae": 30.94,
+      "rmse": 42.28,
+      "mape_percent": 3.15
+    },
+    "RECOVERY": {
+      "mae": 16.62,
+      "rmse": 23.86,
+      "mape_percent": 1.73
+    },
+    "SLOW_MOVEMENT": {
+      "mae": 19.36,
+      "rmse": 28.22,
+      "mape_percent": 1.95
+    },
+    "SUDDEN_INFLOW": {
+      "mae": 17.32,
+      "rmse": 24.14,
+      "mape_percent": 2.02
+    },
+    "WEATHER_SLOWDOWN": {
+      "mae": 15.19,
+      "rmse": 21.75,
+      "mape_percent": 1.62
     }
   },
+  "feature_importance": {
+    "15m": [
+      [
+        "current_crowd",
+        0.9771
+      ],
+      [
+        "crowd_lag_1",
+        0.0191
+      ],
+      [
+        "in_transit_count",
+        0.0007
+      ],
+      [
+        "crowd_lag_2",
+        0.0006
+      ],
+      [
+        "occupancy_pct",
+        0.0006
+      ],
+      [
+        "crowd_lag_4",
+        0.0003
+      ],
+      [
+        "crowd_delta_30m",
+        0.0003
+      ],
+      [
+        "inflow",
+        0.0002
+      ],
+      [
+        "inflow_lag_1",
+        0.0002
+      ],
+      [
+        "outflow",
+        0.0002
+      ],
+      [
+        "cos_time_of_day",
+        0.0002
+      ],
+      [
+        "crowd_lag_3",
+        0.0001
+      ],
+      [
+        "upstream_crowd_lag_1",
+        0.0001
+      ],
+      [
+        "sin_time_of_day",
+        0.0001
+      ],
+      [
+        "crowd_delta_15m",
+        0.0
+      ],
+      [
+        "inflow_accel",
+        0.0
+      ],
+      [
+        "net_flow",
+        0.0
+      ],
+      [
+        "net_flow_accel",
+        0.0
+      ],
+      [
+        "average_speed",
+        0.0
+      ],
+      [
+        "transit_time",
+        0.0
+      ],
+      [
+        "density_speed_ratio",
+        0.0
+      ],
+      [
+        "capacity",
+        0.0
+      ],
+      [
+        "upstream_outflow_lag_2",
+        0.0
+      ],
+      [
+        "upstream_pressure",
+        0.0
+      ],
+      [
+        "day_of_week",
+        0.0
+      ],
+      [
+        "is_weekend",
+        0.0
+      ],
+      [
+        "weather_code",
+        0.0
+      ],
+      [
+        "is_bottleneck",
+        0.0
+      ],
+      [
+        "cp_id",
+        0.0
+      ]
+    ],
+    "30m": [
+      [
+        "current_crowd",
+        0.9764
+      ],
+      [
+        "crowd_lag_1",
+        0.0147
+      ],
+      [
+        "in_transit_count",
+        0.0019
+      ],
+      [
+        "crowd_lag_4",
+        0.001
+      ],
+      [
+        "crowd_delta_30m",
+        0.0008
+      ],
+      [
+        "inflow_lag_1",
+        0.0008
+      ],
+      [
+        "outflow",
+        0.0008
+      ],
+      [
+        "cos_time_of_day",
+        0.0007
+      ],
+      [
+        "inflow",
+        0.0005
+      ],
+      [
+        "occupancy_pct",
+        0.0005
+      ],
+      [
+        "upstream_crowd_lag_1",
+        0.0005
+      ],
+      [
+        "sin_time_of_day",
+        0.0003
+      ],
+      [
+        "crowd_lag_2",
+        0.0001
+      ],
+      [
+        "crowd_lag_3",
+        0.0001
+      ],
+      [
+        "net_flow",
+        0.0001
+      ],
+      [
+        "transit_time",
+        0.0001
+      ],
+      [
+        "capacity",
+        0.0001
+      ],
+      [
+        "upstream_outflow_lag_2",
+        0.0001
+      ],
+      [
+        "upstream_pressure",
+        0.0001
+      ],
+      [
+        "cp_id",
+        0.0001
+      ],
+      [
+        "crowd_delta_15m",
+        0.0
+      ],
+      [
+        "inflow_accel",
+        0.0
+      ],
+      [
+        "net_flow_accel",
+        0.0
+      ],
+      [
+        "average_speed",
+        0.0
+      ],
+      [
+        "density_speed_ratio",
+        0.0
+      ],
+      [
+        "day_of_week",
+        0.0
+      ],
+      [
+        "is_weekend",
+        0.0
+      ],
+      [
+        "weather_code",
+        0.0
+      ],
+      [
+        "is_bottleneck",
+        0.0
+      ]
+    ],
+    "60m": [
+      [
+        "current_crowd",
+        0.9514
+      ],
+      [
+        "crowd_lag_1",
+        0.0137
+      ],
+      [
+        "inflow_lag_1",
+        0.0071
+      ],
+      [
+        "in_transit_count",
+        0.007
+      ],
+      [
+        "inflow",
+        0.0054
+      ],
+      [
+        "outflow",
+        0.0023
+      ],
+      [
+        "upstream_crowd_lag_1",
+        0.0023
+      ],
+      [
+        "crowd_delta_30m",
+        0.002
+      ],
+      [
+        "cos_time_of_day",
+        0.0018
+      ],
+      [
+        "crowd_lag_2",
+        0.0017
+      ],
+      [
+        "crowd_lag_3",
+        0.0015
+      ],
+      [
+        "crowd_lag_4",
+        0.0011
+      ],
+      [
+        "occupancy_pct",
+        0.0007
+      ],
+      [
+        "sin_time_of_day",
+        0.0006
+      ],
+      [
+        "capacity",
+        0.0003
+      ],
+      [
+        "upstream_outflow_lag_2",
+        0.0003
+      ],
+      [
+        "cp_id",
+        0.0002
+      ],
+      [
+        "crowd_delta_15m",
+        0.0001
+      ],
+      [
+        "net_flow",
+        0.0001
+      ],
+      [
+        "average_speed",
+        0.0001
+      ],
+      [
+        "transit_time",
+        0.0001
+      ],
+      [
+        "density_speed_ratio",
+        0.0001
+      ],
+      [
+        "upstream_pressure",
+        0.0001
+      ],
+      [
+        "weather_code",
+        0.0001
+      ],
+      [
+        "inflow_accel",
+        0.0
+      ],
+      [
+        "net_flow_accel",
+        0.0
+      ],
+      [
+        "day_of_week",
+        0.0
+      ],
+      [
+        "is_weekend",
+        0.0
+      ],
+      [
+        "is_bottleneck",
+        0.0
+      ]
+    ]
+  },
   "model_export": {
-    "version": "1.0.0",
+    "version": "2.0.0-quantile-spatiotemporal",
     "features": [
       "current_crowd",
       "crowd_lag_1",
@@ -126,13 +526,20 @@
       "crowd_delta_15m",
       "crowd_delta_30m",
       "inflow",
+      "inflow_lag_1",
+      "inflow_accel",
       "outflow",
       "net_flow",
+      "net_flow_accel",
       "average_speed",
       "transit_time",
       "occupancy_pct",
+      "density_speed_ratio",
       "capacity",
       "in_transit_count",
+      "upstream_crowd_lag_1",
+      "upstream_outflow_lag_2",
+      "upstream_pressure",
       "sin_time_of_day",
       "cos_time_of_day",
       "day_of_week",
@@ -141,93 +548,215 @@
       "is_bottleneck",
       "cp_id"
     ],
+    "feature_importance_top": {
+      "15m": [
+        [
+          "current_crowd",
+          0.9771
+        ],
+        [
+          "crowd_lag_1",
+          0.0191
+        ],
+        [
+          "in_transit_count",
+          0.0007
+        ],
+        [
+          "crowd_lag_2",
+          0.0006
+        ],
+        [
+          "occupancy_pct",
+          0.0006
+        ],
+        [
+          "crowd_lag_4",
+          0.0003
+        ],
+        [
+          "crowd_delta_30m",
+          0.0003
+        ]
+      ],
+      "30m": [
+        [
+          "current_crowd",
+          0.9764
+        ],
+        [
+          "crowd_lag_1",
+          0.0147
+        ],
+        [
+          "in_transit_count",
+          0.0019
+        ],
+        [
+          "crowd_lag_4",
+          0.001
+        ],
+        [
+          "crowd_delta_30m",
+          0.0008
+        ],
+        [
+          "inflow_lag_1",
+          0.0008
+        ],
+        [
+          "outflow",
+          0.0008
+        ]
+      ],
+      "60m": [
+        [
+          "current_crowd",
+          0.9514
+        ],
+        [
+          "crowd_lag_1",
+          0.0137
+        ],
+        [
+          "inflow_lag_1",
+          0.0071
+        ],
+        [
+          "in_transit_count",
+          0.007
+        ],
+        [
+          "inflow",
+          0.0054
+        ],
+        [
+          "outflow",
+          0.0023
+        ],
+        [
+          "upstream_crowd_lag_1",
+          0.0023
+        ]
+      ]
+    },
     "horizons": {
       "15m": {
-        "intercept": 55.28271642306095,
+        "intercept": -13.446538144586384,
         "coefficients": {
-          "current_crowd": 0.5343857728859805,
-          "crowd_lag_1": 0.38079321529707477,
-          "crowd_lag_2": 0.2758238498258475,
-          "crowd_lag_3": -0.048207894306672903,
-          "crowd_lag_4": -0.07728087697116406,
-          "crowd_delta_15m": 0.15359279736633444,
-          "crowd_delta_30m": 0.25856204193422877,
-          "inflow": -0.08673206704610079,
-          "outflow": -0.24032485589658187,
-          "net_flow": 0.15359279712383211,
-          "average_speed": -5.727815333977571,
-          "transit_time": -0.11755486885846773,
-          "occupancy_pct": -3.6597651554085053,
-          "capacity": -0.004236551579845463,
-          "in_transit_count": 0.10701616214558653,
-          "sin_time_of_day": 2.628162646417512,
-          "cos_time_of_day": -5.604740619162493,
-          "day_of_week": 0.16870813260934742,
-          "is_weekend": -1.1460861027330895,
-          "weather_code": -1.3363144780291234,
+          "current_crowd": 0.9623150332025227,
+          "crowd_lag_1": -0.030129205946223557,
+          "crowd_lag_2": 0.17619920987738635,
+          "crowd_lag_3": -0.04416962051583798,
+          "crowd_lag_4": -0.05882757144007864,
+          "crowd_delta_15m": -0.498502272875066,
+          "crowd_delta_30m": 0.8155734141836434,
+          "inflow": -1.3642591397689074,
+          "inflow_lag_1": 1.3485176668693983,
+          "inflow_accel": 1.4675888664144787,
+          "outflow": -0.4241671435323508,
+          "net_flow": -0.9400919883752851,
+          "net_flow_accel": 0.5042788800393683,
+          "average_speed": -4.426880150136448,
+          "transit_time": -0.17309496390760115,
+          "occupancy_pct": -1.2242883738423,
+          "density_speed_ratio": 1.0531333228998416,
+          "capacity": 0.011540187472830216,
+          "in_transit_count": 0.11191061083387288,
+          "upstream_crowd_lag_1": 0.0033345023826618744,
+          "upstream_outflow_lag_2": -0.0594232895232311,
+          "upstream_pressure": -0.16937375485401196,
+          "sin_time_of_day": 2.974395719204531,
+          "cos_time_of_day": -5.632853812015922,
+          "day_of_week": 0.15779413014679472,
+          "is_weekend": -1.0184313490801806,
+          "weather_code": -2.270018226825129,
           "is_bottleneck": 0.0,
-          "cp_id": -2.367274410489137
+          "cp_id": -3.1516431610922324
         },
-        "rmse": 22.95,
-        "mae": 16.17
+        "rmse": 20.51,
+        "mae": 13.79,
+        "q10_offset": 115.75,
+        "q90_offset": 126.72,
+        "quantile_coverage_pct": 89.62
       },
       "30m": {
-        "intercept": 123.42179746928673,
+        "intercept": 18.073786728158893,
         "coefficients": {
-          "current_crowd": 0.6226364833176182,
-          "crowd_lag_1": 0.41314285371589693,
-          "crowd_lag_2": 0.2999786489113609,
-          "crowd_lag_3": -0.07308434490343484,
-          "crowd_lag_4": -0.1242574038012935,
-          "crowd_delta_15m": 0.20949368096712095,
-          "crowd_delta_30m": 0.322657342732577,
-          "inflow": -0.15541400557916568,
-          "outflow": -0.36490767097279797,
-          "net_flow": 0.20949368086481635,
-          "average_speed": -9.470755400761327,
-          "transit_time": -0.19184740934253156,
-          "occupancy_pct": -7.734958825215475,
-          "capacity": -0.013600427248584122,
-          "in_transit_count": 0.18683687428736204,
-          "sin_time_of_day": 4.969286186338941,
-          "cos_time_of_day": -10.386762154482188,
-          "day_of_week": 0.31955016723288515,
-          "is_weekend": -2.1087019361091146,
-          "weather_code": -2.6189829218650766,
+          "current_crowd": 0.962533824582214,
+          "crowd_lag_1": -0.05784034350558137,
+          "crowd_lag_2": 0.29497126932840756,
+          "crowd_lag_3": -0.04839019004826478,
+          "crowd_lag_4": -0.10669366311651528,
+          "crowd_delta_15m": -1.083118579462843,
+          "crowd_delta_30m": 1.6152471363859437,
+          "inflow": -2.0152210131395556,
+          "inflow_lag_1": 1.7999218638520773,
+          "inflow_accel": 2.202942935960669,
+          "outflow": -0.5916011309717171,
+          "net_flow": -1.4236199657277337,
+          "net_flow_accel": 0.8482449057674196,
+          "average_speed": -7.156058652173927,
+          "transit_time": -0.27368195396839223,
+          "occupancy_pct": -3.7524093508196046,
+          "density_speed_ratio": 1.5449768711673249,
+          "capacity": 0.010402446151746899,
+          "in_transit_count": 0.18589658672003082,
+          "upstream_crowd_lag_1": 0.004558536549298866,
+          "upstream_outflow_lag_2": 0.059092817760746985,
+          "upstream_pressure": -0.23721756041616596,
+          "sin_time_of_day": 5.591590841838793,
+          "cos_time_of_day": -10.323105677500513,
+          "day_of_week": 0.25846406330122573,
+          "is_weekend": -1.740463827506691,
+          "weather_code": -3.6053260196976455,
           "is_bottleneck": 0.0,
-          "cp_id": -3.44621198700267
+          "cp_id": -4.904232126593362
         },
-        "rmse": 28.67,
-        "mae": 21.33
+        "rmse": 24.77,
+        "mae": 17.23,
+        "q10_offset": 105.83,
+        "q90_offset": 125.21,
+        "quantile_coverage_pct": 87.38
       },
       "60m": {
-        "intercept": 296.3036449810734,
+        "intercept": 148.07815224541696,
         "coefficients": {
-          "current_crowd": 0.8232935836938763,
-          "crowd_lag_1": 0.4708242207016047,
-          "crowd_lag_2": 0.4246537160050531,
-          "crowd_lag_3": -0.07417816465181137,
-          "crowd_lag_4": -0.31052094681775344,
-          "crowd_delta_15m": 0.3524693764234038,
-          "crowd_delta_30m": 0.3986393517013043,
-          "inflow": -0.3474993653454273,
-          "outflow": -0.6999687522534095,
-          "net_flow": 0.35246937702579695,
-          "average_speed": -9.863956739003578,
-          "transit_time": -0.26378621341462566,
-          "occupancy_pct": -18.2749856732567,
-          "capacity": -0.04547862277481509,
-          "in_transit_count": 0.32663513424301,
-          "sin_time_of_day": 9.511227016493075,
-          "cos_time_of_day": -20.02058009057442,
-          "day_of_week": 0.6561519515600662,
-          "is_weekend": -4.201189016995698,
-          "weather_code": -4.383856073443627,
+          "current_crowd": 1.1325315989174294,
+          "crowd_lag_1": -0.24959477746749434,
+          "crowd_lag_2": 0.5952685520735312,
+          "crowd_lag_3": -0.0607424507785136,
+          "crowd_lag_4": -0.2334170624399993,
+          "crowd_delta_15m": -6.100103436053523,
+          "crowd_delta_30m": 3.9703833833144317,
+          "inflow": -4.834485695877312,
+          "inflow_lag_1": 6.016514756327928,
+          "inflow_accel": 6.719839298716088,
+          "outflow": -2.7429989067831713,
+          "net_flow": -2.091486837314701,
+          "net_flow_accel": 2.602926180652497,
+          "average_speed": -7.414162840595014,
+          "transit_time": -0.39924103950470047,
+          "occupancy_pct": -11.946042646287102,
+          "density_speed_ratio": 2.511312430712274,
+          "capacity": -0.010311097451361563,
+          "in_transit_count": 0.31038826705364486,
+          "upstream_crowd_lag_1": 0.003713316554174289,
+          "upstream_outflow_lag_2": 0.5958419604307389,
+          "upstream_pressure": -0.2675552407785294,
+          "sin_time_of_day": 11.44964798950425,
+          "cos_time_of_day": -20.16559505851174,
+          "day_of_week": 0.47299986011184114,
+          "is_weekend": -3.011598759405961,
+          "weather_code": -6.296004266076478,
           "is_bottleneck": 0.0,
-          "cp_id": -1.7373217376050716
+          "cp_id": -6.717309411647204
         },
-        "rmse": 40.08,
-        "mae": 30.2
+        "rmse": 29.41,
+        "mae": 20.59,
+        "q10_offset": 92.12,
+        "q90_offset": 124.98,
+        "quantile_coverage_pct": 86.73
       }
     }
   }

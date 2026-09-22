@@ -71,9 +71,10 @@ SCENARIOS = [
 ]
 
 INTERVAL_MINUTES = 15
-TOTAL_DAYS = 30  # Generates 30 days of 15m resolution data (2,880 time steps x 5 CPs = 14,400 data points)
+TOTAL_DAYS = 60  # Generates 60 days of 15m resolution data (5,760 time steps x 5 CPs = 28,800 data points)
 
 # Physical Limits
 MIN_SPEED_KMH = 0.2
 MAX_SPEED_KMH = 12.0
 NORMAL_SPEED_KMH = 2.5
+
