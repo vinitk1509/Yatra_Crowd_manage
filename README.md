@@ -140,10 +140,4 @@ You can click **"Sign In / Roles"** on the UI to quickly switch between any of t
 * `GET /api/predictions/live` — Network-wide multi-horizon forecast (+15m, +30m, +60m)
 * `GET /api/predictions/checkpoints/{id}` — Gate-specific predictions with 95% confidence intervals and explainable signals
 
----
-
-## 🎤 Presentation Guide for Supervisors
-
-For a full script, click-by-click instructions, and answers to supervisor questions, refer to:
-📄 **[SUPERVISOR_PRESENTATION_GUIDE.md](./SUPERVISOR_PRESENTATION_GUIDE.md)**
 
