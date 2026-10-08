@@ -37,6 +37,7 @@ export const viewport: Viewport = {
 }
 
 import { AuthProvider } from '@/lib/auth-context'
+import { UnifiedCrowdProvider } from '@/lib/unified-crowd-state'
 
 export default function RootLayout({
   children,
@@ -47,10 +48,13 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <AuthProvider>
-          {children}
+          <UnifiedCrowdProvider>
+            {children}
+          </UnifiedCrowdProvider>
         </AuthProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )
 }
+

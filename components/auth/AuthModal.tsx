@@ -57,11 +57,15 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [loginEmail, setLoginEmail] = useState('admin@yatraflow.gov.in')
   const [loginPassword, setLoginPassword] = useState('Admin@12345')
   
-  // Register form state
+  // Register form state (Pilgrim registration)
   const [regName, setRegName] = useState('')
   const [regEmail, setRegEmail] = useState('')
   const [regPassword, setRegPassword] = useState('')
-  const [regRole, setRegRole] = useState<UserRole>('CONTROL_ROOM_OPERATOR')
+  const [regAge, setRegAge] = useState<number>(30)
+  const [regGender, setRegGender] = useState<'MALE' | 'FEMALE' | 'OTHER'>('MALE')
+  const [regPhone, setRegPhone] = useState('')
+  const [regEmergency, setRegEmergency] = useState('')
+  const [regRouteId, setRegRouteId] = useState<number>(1)
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -98,8 +102,14 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setLoading(true)
 
     try {
-      await register(regName, regEmail, regPassword, regRole)
-      setSuccessMsg('Account registered and authenticated!')
+      await register(regName, regEmail, regPassword, 'PILGRIM', {
+        age: Number(regAge),
+        gender: regGender,
+        phoneNumber: regPhone || undefined,
+        emergencyContact: regEmergency || undefined,
+        routeId: Number(regRouteId),
+      })
+      setSuccessMsg('Pilgrim account created and official QR Pass generated!')
       setTimeout(() => {
         setSuccessMsg(null)
         onClose()
@@ -267,86 +277,145 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </form>
             )}
 
-            {/* TAB: REGISTER */}
+            {/* TAB: REGISTER (PILGRIM YATRI ONLY) */}
             {tab === 'register' && (
-              <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
+              <form onSubmit={handleRegisterSubmit} className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                <div className="p-2.5 bg-[#2d5a3b]/10 border border-[#2d5a3b]/30 flex items-center justify-between">
+                  <span className="text-[10px] font-mono font-bold text-[#2d5a3b] uppercase">
+                    OFFICIAL YATRI PASS REGISTRATION
+                  </span>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 bg-[#2d5a3b] text-white">
+                    ROLE: PILGRIM
+                  </span>
+                </div>
+
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
-                    Full Name
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
+                    Pilgrim Full Name *
                   </label>
                   <div className="relative">
-                    <UserIcon className="absolute left-3 top-3 w-4 h-4 text-[#6f706b]" />
+                    <UserIcon className="absolute left-3 top-2.5 w-4 h-4 text-[#6f706b]" />
                     <input
                       type="text"
                       required
                       value={regName}
                       onChange={(e) => setRegName(e.target.value)}
-                      placeholder="e.g. Inspector R. Sharma"
-                      className="w-full pl-9 pr-3 py-2 text-sm bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] dark:focus:border-[#80a88b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
+                      placeholder="e.g. Vinit Kumar"
+                      className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] dark:focus:border-[#80a88b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
                     />
                   </div>
                   {fieldErrors.name && (
-                    <p className="text-[10px] text-[#ad4037] mt-1">{fieldErrors.name}</p>
+                    <p className="text-[10px] text-[#ad4037] mt-0.5">{fieldErrors.name}</p>
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
-                    Official Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 w-4 h-4 text-[#6f706b]" />
-                    <input
-                      type="email"
-                      required
-                      value={regEmail}
-                      onChange={(e) => setRegEmail(e.target.value)}
-                      placeholder="e.g. rsharma@yatraflow.gov.in"
-                      className="w-full pl-9 pr-3 py-2 text-sm bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] dark:focus:border-[#80a88b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
-                    />
-                  </div>
-                  {fieldErrors.email && (
-                    <p className="text-[10px] text-[#ad4037] mt-1">{fieldErrors.email}</p>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
-                      Password (min 6)
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
+                      Email Address *
                     </label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 w-4 h-4 text-[#6f706b]" />
+                      <Mail className="absolute left-3 top-2.5 w-4 h-4 text-[#6f706b]" />
+                      <input
+                        type="email"
+                        required
+                        value={regEmail}
+                        onChange={(e) => setRegEmail(e.target.value)}
+                        placeholder="vinit@gmail.com"
+                        className="w-full pl-9 pr-2 py-1.5 text-xs bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
+                      Password (min 6) *
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-2.5 w-4 h-4 text-[#6f706b]" />
                       <input
                         type="password"
                         required
                         value={regPassword}
                         onChange={(e) => setRegPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full pl-9 pr-3 py-2 text-sm bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] dark:focus:border-[#80a88b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
+                        className="w-full pl-9 pr-2 py-1.5 text-xs bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
                       />
                     </div>
-                    {fieldErrors.password && (
-                      <p className="text-[10px] text-[#ad4037] mt-1">{fieldErrors.password}</p>
-                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
+                      Age *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min={5}
+                      max={99}
+                      value={regAge}
+                      onChange={(e) => setRegAge(Number(e.target.value))}
+                      className="w-full px-3 py-1.5 text-xs bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
-                      Assigned RBAC Role
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
+                      Gender *
                     </label>
                     <select
-                      value={regRole}
-                      onChange={(e) => setRegRole(e.target.value as UserRole)}
-                      className="w-full px-3 py-2 text-xs bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] dark:focus:border-[#80a88b] outline-hidden text-[#252927] dark:text-[#f4f0ea] h-[38px]"
+                      value={regGender}
+                      onChange={(e) => setRegGender(e.target.value as any)}
+                      className="w-full px-2 py-1.5 text-xs bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
                     >
-                      <option value="PILGRIM">PILGRIM (YATRI)</option>
-                      <option value="CONTROL_ROOM_OPERATOR">CONTROL ROOM OPERATOR</option>
-                      <option value="CHECKPOINT_OPERATOR">CHECKPOINT OPERATOR</option>
-                      <option value="EMERGENCY_OFFICER">EMERGENCY OFFICER</option>
-                      <option value="SUPERVISOR">SUPERVISOR</option>
-                      <option value="ADMIN">ADMINISTRATOR</option>
+                      <option value="MALE">MALE</option>
+                      <option value="FEMALE">FEMALE</option>
+                      <option value="OTHER">OTHER</option>
                     </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
+                    Authorized Yatra Trail *
+                  </label>
+                  <select
+                    value={regRouteId}
+                    onChange={(e) => setRegRouteId(Number(e.target.value))}
+                    className="w-full px-3 py-1.5 text-xs font-bold bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
+                  >
+                    <option value={1}>RT-BALTAL · Baltal Base Camp Route (14 km)</option>
+                    <option value={2}>RT-PAHALGAM · Pahalgam Traditional Route (48 km)</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
+                      Mobile Number
+                    </label>
+                    <input
+                      type="text"
+                      value={regPhone}
+                      onChange={(e) => setRegPhone(e.target.value)}
+                      placeholder="+91 9876543210"
+                      className="w-full px-2.5 py-1.5 text-xs bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6f706b] dark:text-[#b7b8b1] mb-1">
+                      Emergency Contact
+                    </label>
+                    <input
+                      type="text"
+                      value={regEmergency}
+                      onChange={(e) => setRegEmergency(e.target.value)}
+                      placeholder="+91 9876543211"
+                      className="w-full px-2.5 py-1.5 text-xs bg-[#f5f1ed] dark:bg-[#1b1c1a] border border-[#e2ddd6] dark:border-[#ffffff1f] focus:border-[#2d5a3b] outline-hidden text-[#252927] dark:text-[#f4f0ea]"
+                    />
                   </div>
                 </div>
 
@@ -354,9 +423,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-2.5 px-4 bg-[#2d5a3b] hover:bg-[#23472e] text-[#fffdfa] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
+                    className="w-full py-2 px-4 bg-[#2d5a3b] hover:bg-[#23472e] text-[#fffdfa] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
                   >
-                    {loading ? 'Creating Credentials...' : 'Create Account & Sign In'}
+                    {loading ? 'Generating Official Pass...' : 'Register Pilgrim & Generate QR Pass'}
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>

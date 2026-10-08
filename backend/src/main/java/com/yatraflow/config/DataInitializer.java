@@ -23,6 +23,7 @@ public class DataInitializer implements CommandLineRunner {
     private final PilgrimRepository pilgrimRepository;
     private final ScanEventRepository scanEventRepository;
     private final CrowdSnapshotRepository crowdSnapshotRepository;
+    private final EmergencyIncidentRepository emergencyIncidentRepository;
     private final QrCodeService qrCodeService;
     private final PasswordEncoder passwordEncoder;
 

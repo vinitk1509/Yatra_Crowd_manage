@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            log.error("Cannot set user authentication from JWT token: {}", e.getMessage());
+            log.warn("Invalid or stale JWT token provided: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

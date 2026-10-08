@@ -26,7 +26,7 @@ export interface LiveScanNotice {
   scanTimestamp: string
 }
 
-const WS_BACKEND_URL = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8080/ws-yatra'
+const WS_BACKEND_URL = typeof window !== 'undefined' ? '/ws-yatra' : (process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8080/ws-yatra')
 
 export function useRealTimeCrowd() {
   const [liveData, setLiveData] = useState<LiveCrowdResponse | null>(null)

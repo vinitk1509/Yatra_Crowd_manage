@@ -176,7 +176,7 @@ export function SupervisorDashboard() {
                       </span>
                     </div>
                     <span className="text-[10px] text-[#6f706b] dark:text-[#b7b8b1]">
-                      Route: {cp.routeName} · Sequence: Gate #{cp.sequenceOrder}
+                      Route: {cp.routeName} · Sequence: Gate #{(cp as any).sequenceOrder || cp.id}
                     </span>
                   </div>
                 </div>
@@ -186,7 +186,7 @@ export function SupervisorDashboard() {
                     OPERATIONAL
                   </span>
                   <span className="text-[10px] text-[#6f706b] dark:text-[#b7b8b1] block mt-1">
-                    Max Cap: {cp.capacityLimit}
+                    Max Cap: {cp.capacity}
                   </span>
                 </div>
               </div>

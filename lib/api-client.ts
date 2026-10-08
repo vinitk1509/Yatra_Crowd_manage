@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+const API_BASE_URL = typeof window !== 'undefined' ? '' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080')
 
 export interface ApiResponse<T> {
   success: boolean
@@ -114,20 +114,36 @@ export async function apiRequest<T>(
     headers['Authorization'] = `Bearer ${token}`
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  })
+  let response: Response
+  try {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+    })
+  } catch (netErr: any) {
+    throw {
+      timestamp: new Date().toISOString(),
+      status: 0,
+      error: 'NetworkError',
+      message: netErr?.message || 'Backend connection failed. Make sure Spring Boot is running on port 8080.',
+    } as ApiError
+  }
 
-  const json = await response.json()
+  const rawText = await response.text()
+  let json: any = null
+  try {
+    json = rawText ? JSON.parse(rawText) : null
+  } catch {
+    json = { message: rawText || response.statusText }
+  }
 
   if (!response.ok) {
     const error: ApiError = {
-      timestamp: json.timestamp || new Date().toISOString(),
+      timestamp: json?.timestamp || new Date().toISOString(),
       status: response.status,
-      error: json.error || response.statusText,
-      message: json.message || 'An unexpected error occurred',
-      fieldErrors: json.fieldErrors,
+      error: json?.error || response.statusText,
+      message: json?.message || rawText || 'An unexpected error occurred',
+      fieldErrors: json?.fieldErrors,
     }
     throw error
   }
@@ -388,8 +404,8 @@ export async function getHistoricalAnalytics(params?: {
   if (params?.interval) query.set('interval', params.interval)
 
   const queryString = query.toString() ? `?${query.toString()}` : ''
-  const res = await apiRequest<HistoricalAnalyticsResponse>(`/api/analytics/crowd${queryString}`)
-  return res.data
+  const res: any = await apiRequest<HistoricalAnalyticsResponse>(`/api/analytics/crowd${queryString}`)
+  return res && res.data !== undefined ? res.data : res
 }
 
 export async function getCheckpointHistoricalAnalytics(
@@ -402,8 +418,8 @@ export async function getCheckpointHistoricalAnalytics(
   if (params?.interval) query.set('interval', params.interval)
 
   const queryString = query.toString() ? `?${query.toString()}` : ''
-  const res = await apiRequest<HistoricalAnalyticsResponse>(`/api/analytics/checkpoints/${checkpointId}${queryString}`)
-  return res.data
+  const res: any = await apiRequest<HistoricalAnalyticsResponse>(`/api/analytics/checkpoints/${checkpointId}${queryString}`)
+  return res && res.data !== undefined ? res.data : res
 }
 
 export async function getMlDataset(params?: {
@@ -419,8 +435,10 @@ export async function getMlDataset(params?: {
   if (params?.interval) query.set('interval', params.interval)
 
   const queryString = query.toString() ? `?${query.toString()}` : ''
-  const res = await apiRequest<MlTrainingSequence[]>(`/api/analytics/ml-dataset${queryString}`)
-  return res.data
+  const res: any = await apiRequest<MlTrainingSequence[]>(`/api/analytics/ml-dataset${queryString}`)
+  if (Array.isArray(res)) return res
+  if (Array.isArray(res?.data)) return res.data
+  return []
 }
 
 // Phase 6 Multi-Horizon Prediction Interfaces
@@ -475,19 +493,388 @@ export interface LivePredictionsResponse {
 }
 
 export async function getLivePredictions(): Promise<LivePredictionsResponse> {
-  const res = await apiRequest<LivePredictionsResponse>('/api/predictions/live')
-  return res.data
+  const res: any = await apiRequest<LivePredictionsResponse>('/api/predictions/live')
+  return res && res.data !== undefined ? res.data : res
 }
 
 export async function getCheckpointPrediction(checkpointId: number): Promise<CheckpointPrediction> {
-  const res = await apiRequest<CheckpointPrediction>(`/api/predictions/checkpoints/${checkpointId}`)
-  return res.data
+  const res: any = await apiRequest<CheckpointPrediction>(`/api/predictions/checkpoints/${checkpointId}`)
+  return res && res.data !== undefined ? res.data : res
 }
 
 export async function getRoutePredictions(routeId: number): Promise<CheckpointPrediction[]> {
-  const res = await apiRequest<CheckpointPrediction[]>(`/api/predictions/route/${routeId}`)
-  return res.data
+  const res: any = await apiRequest<CheckpointPrediction[]>(`/api/predictions/route/${routeId}`)
+  if (Array.isArray(res)) return res
+  if (Array.isArray(res?.data)) return res.data
+  return []
 }
+
+export async function triggerSimulationPulse(): Promise<void> {
+  await apiRequest('/api/simulation/pulse', { method: 'POST' })
+}
+
+export async function toggleSimulation(active?: boolean): Promise<{ active: boolean }> {
+  const url = active !== undefined ? `/api/simulation/toggle?active=${active}` : '/api/simulation/toggle'
+  const res: any = await apiRequest(url, { method: 'POST' })
+  return res && res.data !== undefined ? res.data : res
+}
+
+// ==========================================
+// Digital Twin & RL Sandbox API Interfaces
+// ==========================================
+
+export interface InterventionConfig {
+  type: 'TRAIL_CLOSURE' | 'GATE_THROTTLE' | 'WEATHER_DISRUPTION' | 'EMERGENCY_EVENT' | 'COMBINED'
+  targetCheckpointCode?: string
+  targetSegmentCode?: string
+  startMinute: number
+  durationMinutes: number
+  throttlePercentage?: number
+  weatherSeverity?: 'CLEAR' | 'RAIN' | 'STORM' | 'FOG'
+  enableRerouting?: boolean
+  emergencyType?: string
+  description?: string
+}
+
+export interface SimulationRunRequest {
+  routeCode: string
+  simulationDurationMinutes: number
+  virtualPilgrimCount: number
+  crowdDistributionPreset: 'MORNING_RUSH' | 'BALANCED' | 'BASE_SURGE' | 'MID_GRIDLOCK'
+  policyType: 'POLICY_A_THRESHOLD' | 'POLICY_B_PPO' | 'POLICY_C_DQN' | 'ALL_COMPARISON'
+  weatherCondition: 'CLEAR' | 'RAIN' | 'STORM' | 'FOG'
+  baseWalkingSpeedKmH?: number
+  randomSeed?: number
+  interventions?: InterventionConfig[]
+}
+
+export interface SimulationStepData {
+  minute: number
+  timeLabel: string
+  totalCorridorCrowd: number
+  totalQueued: number
+  throughputCumulative: number
+  averageSpeedKmH: number
+  checkpointCrowds: Record<string, number>
+  checkpointOccupancies: Record<string, number>
+  gateReleaseRates: Record<string, number>
+  segmentQueues: Record<string, number>
+}
+
+export interface SimulatedCheckpointSummary {
+  checkpointCode: string
+  checkpointName: string
+  capacity: number
+  peakCrowd: number
+  peakOccupancy: number
+  averageOccupancy: number
+  totalEntered: number
+  totalExited: number
+  peakQueueLength: number
+  averageWaitTimeMinutes: number
+  safetyViolationMinutes: number
+}
+
+export interface SimulationRunResponse {
+  runId: string
+  scenarioName: string
+  routeCode: string
+  policyType: string
+  policyLabel: string
+  randomSeed: number
+  durationMinutes: number
+  totalPilgrimsSimulated: number
+  executionTimestamp: string
+  deterministic: boolean
+  peakOccupancyPercentage: number
+  averageOccupancyPercentage: number
+  estimatedAverageWaitMinutes: number
+  totalQueueLength: number
+  congestionEventsCount: number
+  netPilgrimThroughput: number
+  averageGateReleaseRate: number
+  estimatedEvacuationMinutes: number
+  safetyThresholdViolations: number
+  operationalPerformanceScore: number
+  timeline: SimulationStepData[]
+  checkpointSummaries: SimulatedCheckpointSummary[]
+  activeInterventions: InterventionConfig[]
+  strategicDiagnosis: string
+}
+
+export interface PolicyComparisonResponse {
+  comparisonId: string
+  scenarioName: string
+  routeCode: string
+  commonRandomSeed: number
+  durationMinutes: number
+  virtualPilgrims: number
+  weatherCondition: string
+  executionTimestamp: string
+  policyAThreshold: SimulationRunResponse
+  policyBPPO: SimulationRunResponse
+  policyCDQN: SimulationRunResponse
+  comparisonMatrix: {
+    peakOccupancies: Record<string, number>
+    averageWaitMinutes: Record<string, number>
+    throughputs: Record<string, number>
+    safetyViolations: Record<string, number>
+    operationalScores: Record<string, number>
+    evacuationTimes: Record<string, number>
+  }
+  comparativeAnalysis: string
+  recommendedPolicy: string
+}
+
+export interface SimulationPreset {
+  id: string
+  name: string
+  routeCode: string
+  description: string
+  pilgrims: number
+  weather: 'CLEAR' | 'RAIN' | 'STORM' | 'FOG'
+  policy: string
+}
+
+export async function getSimulationPresets(): Promise<SimulationPreset[]> {
+  try {
+    const res: any = await apiRequest<SimulationPreset[]>('/api/simulation/sandbox/presets')
+    if (Array.isArray(res)) return res
+    if (Array.isArray(res?.data)) return res.data
+    return []
+  } catch {
+    return []
+  }
+}
+
+export async function runDigitalTwinSimulation(request: SimulationRunRequest): Promise<SimulationRunResponse> {
+  const res: any = await apiRequest<SimulationRunResponse>('/api/simulation/sandbox/run', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  })
+  return res && res.data !== undefined ? res.data : res
+}
+
+export async function compareDigitalTwinPolicies(request: SimulationRunRequest): Promise<PolicyComparisonResponse> {
+  const res: any = await apiRequest<PolicyComparisonResponse>('/api/simulation/sandbox/compare', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  })
+  return res && res.data !== undefined ? res.data : res
+}
+
+// ==========================================
+// Emergency & Public Safety API Functions
+// ==========================================
+
+export type IncidentType =
+  | 'MEDICAL'
+  | 'PERSONAL_SAFETY'
+  | 'LOST_PILGRIM'
+  | 'LANDSLIDE'
+  | 'WEATHER'
+  | 'ROUTE_BLOCKED'
+  | 'CROWD_DANGER'
+  | 'FIRE'
+  | 'INFRASTRUCTURE_FAILURE'
+  | 'OTHER'
+
+export type EmergencyScope = 'PERSONAL' | 'CHECKPOINT' | 'ROUTE' | 'GLOBAL'
+export type EmergencySeverity = 'INFO' | 'ADVISORY' | 'WARNING' | 'CRITICAL'
+export type EmergencyStatus =
+  | 'UNVERIFIED_REPORT'
+  | 'OPEN'
+  | 'ACKNOWLEDGED'
+  | 'RESPONDER_ASSIGNED'
+  | 'TEAM_DISPATCHED'
+  | 'RESOLVED'
+  | 'FALSE_ALARM'
+
+export type LocationSource = 'LIVE_GPS' | 'LAST_KNOWN_GPS' | 'LAST_CHECKPOINT' | 'MANUAL' | 'UNAVAILABLE'
+
+export interface EmergencyIncident {
+  id: number
+  incidentCode: string
+  incidentType: IncidentType
+  scope: EmergencyScope
+  severity: EmergencySeverity
+  status: EmergencyStatus
+  pilgrimId?: number
+  pilgrimName?: string
+  pilgrimRegistrationNumber?: string
+  pilgrimPhone?: string
+  pilgrimEmergencyContact?: string
+  pilgrimBloodGroup?: string
+  pilgrimAge?: number
+  pilgrimGender?: string
+  routeId?: number
+  routeName?: string
+  routeCode?: string
+  checkpointId?: number
+  checkpointName?: string
+  checkpointCode?: string
+  latitude?: number
+  longitude?: number
+  locationAccuracy?: number
+  locationSource: LocationSource
+  title: string
+  description?: string
+  safetyInstruction?: string
+  verified: boolean
+  reportedAt: string
+  acknowledgedAt?: string
+  dispatchedAt?: string
+  resolvedAt?: string
+  reportedByUserName?: string
+  reportedByUserEmail?: string
+  assignedResponderName?: string
+  responderNotes?: string
+}
+
+export interface PublicSafetyAlert {
+  id: number
+  incidentCode: string
+  incidentType: IncidentType
+  scope: EmergencyScope
+  severity: EmergencySeverity
+  status: EmergencyStatus
+  routeId?: number
+  routeName?: string
+  routeCode?: string
+  checkpointId?: number
+  checkpointName?: string
+  checkpointCode?: string
+  title: string
+  description?: string
+  safetyInstruction?: string
+  reportedAt: string
+  updatedAt?: string
+}
+
+export interface CreatePersonalSosPayload {
+  incidentType: IncidentType
+  description?: string
+  latitude?: number
+  longitude?: number
+  locationAccuracy?: number
+  locationSource?: LocationSource
+  checkpointId?: number
+  routeId?: number
+}
+
+export interface ReportPublicHazardPayload {
+  incidentType: IncidentType
+  routeId: number
+  checkpointId?: number
+  title: string
+  description?: string
+  severity?: EmergencySeverity
+  latitude?: number
+  longitude?: number
+}
+
+export interface VerifyHazardPayload {
+  status: EmergencyStatus
+  severity: EmergencySeverity
+  scope: EmergencyScope
+  safetyInstruction: string
+  responderNotes?: string
+}
+
+export interface UpdateIncidentStatusPayload {
+  status: EmergencyStatus
+  assignedResponderId?: number
+  responderNotes?: string
+  safetyInstruction?: string
+}
+
+export async function createPersonalSos(payload: CreatePersonalSosPayload): Promise<EmergencyIncident> {
+  const res: any = await apiRequest<EmergencyIncident>('/api/emergency/sos', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+  return res && res.data !== undefined ? res.data : res
+}
+
+export async function reportPublicHazard(payload: ReportPublicHazardPayload): Promise<EmergencyIncident> {
+  const res: any = await apiRequest<EmergencyIncident>('/api/emergency/hazard', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+  return res && res.data !== undefined ? res.data : res
+}
+
+export async function getMyActiveEmergency(): Promise<EmergencyIncident | null> {
+  try {
+    const res: any = await apiRequest<EmergencyIncident>('/api/emergency/my-active')
+    return res && res.data !== undefined ? res.data : res
+  } catch {
+    return null
+  }
+}
+
+export async function getPublicSafetyAlerts(params?: {
+  routeId?: number
+  checkpointId?: number
+}): Promise<PublicSafetyAlert[]> {
+  try {
+    const query = new URLSearchParams()
+    if (params?.routeId) query.set('routeId', params.routeId.toString())
+    if (params?.checkpointId) query.set('checkpointId', params.checkpointId.toString())
+
+    const url = query.toString() ? `/api/emergency/public-alerts?${query.toString()}` : '/api/emergency/public-alerts'
+    const res: any = await apiRequest<PublicSafetyAlert[]>(url)
+    if (Array.isArray(res)) return res
+    if (Array.isArray(res?.data)) return res.data
+    return []
+  } catch {
+    return []
+  }
+}
+
+export async function getEmergencyIncidents(params?: {
+  scope?: string
+  status?: string
+}): Promise<EmergencyIncident[]> {
+  try {
+    const query = new URLSearchParams()
+    if (params?.scope) query.set('scope', params.scope)
+    if (params?.status) query.set('status', params.status)
+
+    const url = query.toString() ? `/api/emergency/incidents?${query.toString()}` : '/api/emergency/incidents'
+    const res: any = await apiRequest<EmergencyIncident[]>(url)
+    if (Array.isArray(res)) return res
+    if (Array.isArray(res?.data)) return res.data
+    return []
+  } catch {
+    return []
+  }
+}
+
+export async function verifyHazardIncident(
+  id: number,
+  payload: VerifyHazardPayload
+): Promise<EmergencyIncident> {
+  const res: any = await apiRequest<EmergencyIncident>(`/api/emergency/incidents/${id}/verify`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })
+  return res && res.data !== undefined ? res.data : res
+}
+
+export async function updateIncidentStatus(
+  id: number,
+  payload: UpdateIncidentStatusPayload
+): Promise<EmergencyIncident> {
+  const res: any = await apiRequest<EmergencyIncident>(`/api/emergency/incidents/${id}/status`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })
+  return res && res.data !== undefined ? res.data : res
+}
+
+
+
 
 
 

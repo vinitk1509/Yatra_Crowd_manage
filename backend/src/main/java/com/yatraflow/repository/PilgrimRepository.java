@@ -14,4 +14,6 @@ public interface PilgrimRepository extends JpaRepository<Pilgrim, Long> {
     boolean existsByPilgrimCode(String pilgrimCode);
     List<Pilgrim> findByRouteId(Long routeId);
     List<Pilgrim> findByStatus(PilgrimStatus status);
+    Optional<Pilgrim> findByName(String name);
+    Optional<Pilgrim> findByNameIgnoreCase(String name);
 }

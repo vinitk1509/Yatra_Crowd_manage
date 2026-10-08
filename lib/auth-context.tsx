@@ -34,7 +34,19 @@ interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
   login: (email: string, password: string) => Promise<User>
-  register: (name: string, email: string, password: string, role: UserRole) => Promise<User>
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    role?: UserRole,
+    details?: {
+      age?: number
+      gender?: string
+      phoneNumber?: string
+      emergencyContact?: string
+      routeId?: number
+    }
+  ) => Promise<User>
   logout: () => void
   switchDemoRole: (role: UserRole) => Promise<void>
   checkBackendHealth: () => Promise<boolean>
@@ -133,13 +145,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     name: string,
     email: string,
     password: string,
-    role: UserRole
+    role: UserRole = 'PILGRIM',
+    details?: {
+      age?: number
+      gender?: string
+      phoneNumber?: string
+      emergencyContact?: string
+      routeId?: number
+    }
   ): Promise<User> => {
     setIsLoading(true)
     try {
+      const payload: any = {
+        name,
+        email,
+        password,
+        role,
+        ...details,
+      }
       const response = await apiRequest<AuthResponseData>('/api/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ name, email, password, role }),
+        body: JSON.stringify(payload),
       })
 
       const authData = response.data

@@ -30,4 +30,10 @@ public class RegisterRequest {
 
     @NotNull(message = "Role is required")
     private Role role;
+
+    private Integer age;
+    private String gender;
+    private String phoneNumber;
+    private String emergencyContact;
+    private Long routeId;
 }

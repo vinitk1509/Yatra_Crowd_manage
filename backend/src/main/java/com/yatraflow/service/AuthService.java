@@ -4,6 +4,7 @@ import com.yatraflow.dto.auth.AuthResponse;
 import com.yatraflow.dto.auth.LoginRequest;
 import com.yatraflow.dto.auth.RegisterRequest;
 import com.yatraflow.dto.user.UserDto;
+import com.yatraflow.entity.Role;
 import com.yatraflow.entity.User;
 import com.yatraflow.exception.ResourceNotFoundException;
 import com.yatraflow.exception.UserAlreadyExistsException;
@@ -25,6 +26,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final PilgrimService pilgrimService;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -32,15 +34,31 @@ public class AuthService {
             throw new UserAlreadyExistsException("User already exists with email: " + request.getEmail());
         }
 
+        Role role = request.getRole() != null ? request.getRole() : Role.PILGRIM;
+
         User user = User.builder()
                 .name(request.getName().trim())
                 .email(request.getEmail().toLowerCase().trim())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(role)
                 .active(true)
                 .build();
 
         User savedUser = userRepository.save(user);
+
+        // If registered as a Pilgrim, auto-generate official Pilgrim registry entry and unique QR Pass
+        if (role == Role.PILGRIM) {
+            com.yatraflow.dto.pilgrim.CreatePilgrimRequest pilgrimReq = com.yatraflow.dto.pilgrim.CreatePilgrimRequest.builder()
+                    .name(request.getName().trim())
+                    .age(request.getAge() != null ? request.getAge() : 30)
+                    .gender(request.getGender() != null ? request.getGender().trim().toUpperCase() : "MALE")
+                    .phoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber().trim() : request.getEmail().trim())
+                    .emergencyContact(request.getEmergencyContact() != null ? request.getEmergencyContact().trim() : "+91 9876543210")
+                    .routeId(request.getRouteId() != null ? request.getRouteId() : 1L)
+                    .build();
+            pilgrimService.registerPilgrim(pilgrimReq);
+        }
+
         String token = jwtService.generateToken(savedUser);
 
         return AuthResponse.builder()
