@@ -4,15 +4,15 @@
 #  • Every 60 minutes : full commit + push of ALL code
 # ============================================================
 
-$RepoPath      = "c:\Users\VAIBHAV KUMAR PAL\Documents\Yatra Crowd Management\Yatra_Crowd_manage"
-$Branch        = "main"           # change if your branch is different
-$IntervalMin   = 10               # incremental push interval (minutes)
-$FullPushMin   = 60               # full push interval (minutes)
+$RepoPath = "c:\Users\VAIBHAV KUMAR PAL\Documents\Yatra Crowd Management\Yatra_Crowd_manage"
+$Branch = "main"           # change if your branch is different
+$IntervalMin = 5                # incremental push interval (minutes)
+$FullPushMin = 60               # full push interval (minutes)
 
 Set-Location $RepoPath
 
-$lastFullPush  = [datetime]::MinValue
-$cycleCount    = 0
+$lastFullPush = [datetime]::MinValue
+$cycleCount = 0
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host " Auto-push started  $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Cyan
@@ -30,7 +30,8 @@ function Do-GitPush {
 
     if ($AddAll) {
         git add -A
-    } else {
+    }
+    else {
         # Stage only modified / new tracked files
         git add -u
         git add .
@@ -52,13 +53,14 @@ function Do-GitPush {
     git push origin $Branch
     if ($LASTEXITCODE -eq 0) {
         Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Push successful: $CommitMessage" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Push FAILED. Check credentials / network." -ForegroundColor Red
     }
 }
 
 while ($true) {
-    $now        = Get-Date
+    $now = Get-Date
     $cycleCount++
 
     $minutesSinceFullPush = ($now - $lastFullPush).TotalMinutes
@@ -69,7 +71,8 @@ while ($true) {
         Write-Host "`n[$(Get-Date -Format 'HH:mm:ss')] === FULL PUSH ===" -ForegroundColor Yellow
         Do-GitPush -CommitMessage $msg -AddAll $true
         $lastFullPush = $now
-    } else {
+    }
+    else {
         # ---- INCREMENTAL PUSH (every 10 min) ----
         $msg = "auto: incremental push $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
         Write-Host "`n[$(Get-Date -Format 'HH:mm:ss')] --- Incremental push ---" -ForegroundColor Cyan
